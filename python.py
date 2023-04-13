@@ -109,7 +109,7 @@ def runTask():
 
     bgimage = Image.open("ben.png")
     bgimage = bgimage.resize((1920,1080), Image.LANCZOS)
-    bgimage = ImageTk.PhotoImage(bgimage)
+    bgimage = ImageTk.PhotoImage(bgimage, master = background)
 
     background.create_image(960,540,anchor="center",image=bgimage)
 
