@@ -7,6 +7,7 @@ from pythonosc import udp_client
 from pythonosc import osc_message_builder
 from PIL import ImageTk, Image
 from threading import Thread
+import vlc
 
 def now():
     return datetime.datetime.now().astimezone()
@@ -26,6 +27,16 @@ def pw(*text):
     print(pout)
 
 pw("Script Start")
+
+blank = tk.Tk()
+width,height=1920,1080 # set the variables 
+d=str(width)+"x"+str(height)
+width,height=1920,1080 # set the variables
+blank.geometry(d)
+blank.configure(bg='#000000')
+blank.title("Blank")
+blank.attributes("-fullscreen", True)
+blank.focus()
 
 def send_osc(message, address="192.168.2.10", port=53000):
     client = udp_client.SimpleUDPClient(address, port)
@@ -52,10 +63,11 @@ def win():
     pw("Win")
     inputtxt.config(state="readonly")
     printButton.config(state="disabled")
-    background.create_text(960,200, text=" Welcome BenSamZ ",fill="magenta",font=("Flood std", 90,  'bold'), anchor="center")
+    background.create_text(960,550, text=" Welcome BenSamZ ",fill="white",font=("Flood std", 90,  'bold'), anchor="center")
     #time.sleep(1)
     pw(send_osc('/cue/{8}/stop'))
     pw(send_osc('/cue/{10}/go'))
+    task_window.destroy()
 
 def tryagain():
     global tryagaintxt
@@ -77,34 +89,36 @@ def printInput(*none):
     else:
         Thread(target=tryagain).start()
 
-my_w = tk.Tk()
-width,height=1920,1080 # set the variables 
-d=str(width)+"x"+str(height)
-width,height=1920,1080 # set the variables
-
 def runTask():
     global inputtxt
     global printButton
     global background
     global tryagaintxt
     global password
-    my_w.geometry(d)
-    my_w.configure(bg='#000000')
-    my_w.title("Ben")
+    global task_window
 
-    background = tk.Canvas(my_w, width=1920, height=1080)
+    task_window = tk.Tk()
+    width,height=1920,1080 # set the variables 
+    d=str(width)+"x"+str(height)
+    width,height=1920,1080 # set the variables
+    task_window.geometry(d)
+    task_window.configure(bg='#000000')
+    task_window.title("Ben")
+
+    background = tk.Canvas(task_window, width=1920, height=1080)
 
     bgimage = Image.open("ben.png")
-    bgimage = bgimage.resize((1546,870), Image.LANCZOS)
+    bgimage = bgimage.resize((1920,1080), Image.LANCZOS)
     bgimage = ImageTk.PhotoImage(bgimage)
 
     background.create_image(960,540,anchor="center",image=bgimage)
 
-    background.create_text(200,870, text=" Ben's Super Secret Login Page ",font=("Montserrat", 50,  'bold'),fill="blue", anchor="w")
-    background.create_text(200,790, text=" SLLET ",fill="magenta",font=("Flood std", 90,  'bold'), anchor="w")
+    background.create_text(100,885, text="Ben's Super Secret",font=("Montserrat", 50,  'bold'), fill="blue", anchor="w")
+    background.create_text(100,950, text="Login Page",font=("Montserrat", 50,  'bold'), fill="blue", anchor="w")
+    background.create_text(100,800, text="SLLET ",fill="magenta",font=("Flood std", 90,  'bold'), anchor="w")
     background.place(relx=0.5,rely=0.5,anchor="center")
 
-    password = tk.Frame(my_w, padx=5, pady=5)
+    password = tk.Frame(task_window, padx=5, pady=5)
 
 
     usertxt = tk.Label(password, text="Username: ",font=("Montserrat", 20), justify="left", anchor="w")
@@ -128,16 +142,36 @@ def runTask():
     printButton = tk.Button(password, text = "Enter", command = printInput, font=("Montserrat", 20,  'bold'))
     printButton.grid(column = 1, row = 2)
 
-    password.place(relx=0.05,rely=0.3,anchor="w")
+    password.place(relx=0.05,rely=0.25,anchor="w")
 
     tryagaintxt = tk.Label(password, text="Try Again",font=("Montserrat", 20, "italic"), justify="left", anchor="w")
 
-    #password = tk.Text(my_w, height=1, width=30, font=("Montserrat", 20))
+    #password = tk.Text(task_window, height=1, width=30, font=("Montserrat", 20))
     #password.pack()
     #password.insert(tk.END, "Just a text Widget\nin two lines\n")
 
-    my_w.attributes("-fullscreen", True)
-    my_w.mainloop()
+    task_window.attributes("-fullscreen", True)
+    task_window.mainloop()
+
+def runIntro():
+    # create a new instance of the media player
+    player = vlc.MediaPlayer()
+
+    # set the media to play
+    media = vlc.Media("Scene 1.mov")
+    player.set_media(media)
+
+    # start playing the media
+    player.play()
+
+    # make the player go fullscreen
+    player.set_fullscreen(True)
+        
+    while player.get_state() != vlc.State.Ended:
+        time.sleep(0.5)
+    print("Done")
+    blank.focus()
+    player.release()
 
 from pythonosc.dispatcher import Dispatcher
 from pythonosc.osc_server import BlockingOSCUDPServer
@@ -149,8 +183,10 @@ def print_handler(address, *args):
 
 def default_handler(address, *args):
     print(f"DEFAULT {address}: {args}")
-    if address == "/start":
+    if address == "/task":
         runTask()
+    elif address == "/intro":
+        runIntro()
     
 dispatcher = Dispatcher()
 dispatcher.map("/something/*", print_handler)
@@ -161,6 +197,7 @@ port = 1337
 
 server = BlockingOSCUDPServer((ip, port), dispatcher)
 print("Ready")
+#runIntro()
 #runTask()
 server.serve_forever()  # Blocks forever
 print("End")
