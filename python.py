@@ -170,7 +170,6 @@ def runIntro():
     while player.get_state() != vlc.State.Ended:
         time.sleep(0.5)
     print("Done")
-    blank.focus()
     player.release()
 
 from pythonosc.dispatcher import Dispatcher
