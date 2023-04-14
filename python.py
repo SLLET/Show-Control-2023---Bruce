@@ -29,7 +29,7 @@ def pw(*text):
 pw("Script Start")
 
 def blank():
-    print("Blank Thread Started")
+    pw("Blank Thread Started")
     blank = tk.Tk()
     width,height=1920,1080 # set the variables 
     d=str(width)+"x"+str(height)
@@ -37,11 +37,12 @@ def blank():
     blank.geometry(d)
     blank.configure(bg='#000000')
     blank.title("Blank")
-    #blank.attributes("-fullscreen", True)
-    #blank.mainloop()
+    blank.attributes("-fullscreen", True)
+    blank.mainloop()
+    pw("Blank Thread Complete")
 
-blank()
-#Thread(target=blank).start()
+#blank()
+Thread(target=blank).start()
 
 def send_osc(message, address="192.168.2.10", port=53000):
     client = udp_client.SimpleUDPClient(address, port)
@@ -49,8 +50,6 @@ def send_osc(message, address="192.168.2.10", port=53000):
     msg = msg.build()
     client.send(msg)
     return "OSC Message Sent"
-
-pw(send_osc('/cue/{19}/'))
 
 def alivetime():
     global scriptstart
@@ -68,7 +67,7 @@ def alivetime():
 
 def sound():
     pw("Sound Triggered")
-    send_osc('/cue/{20}/go')
+    pw(send_osc('/cue/{20}/go'))
 
 def win():
     pw("Win")
@@ -133,13 +132,13 @@ def runTask():
     # Button Creation
     printButton = tk.Button(password, text = "Enter", command = printInput, font=("Montserrat", 20,  'bold'))
     printButton.grid(column = 1, row = 2)
-    password.place(relx=0.05,rely=0.25,anchor="w")
+    password.place(relx=0.95,rely=0.6,anchor="e")
 
     sounds = tk.Button(task_window,text="Sound!",bg="#000000",fg="white",font=("Montserrat", 20,  'bold'), command=sound)
-    sounds.place(relx=0.9, rely=0.1, anchor='e')
+    sounds.place(relx=0.9, rely=0.2, anchor='e')
     
     tryagaintxt = tk.Label(password, text="Try Again",font=("Montserrat", 20, "italic"), justify="left", anchor="w")
-    #task_window.attributes("-fullscreen", True)
+    task_window.attributes("-fullscreen", True)
     task_window.mainloop()
 
 def runEnd():
@@ -172,9 +171,9 @@ def print_handler(address, *args):
 def default_handler(address, *args):
     print(f"DEFAULT {address}: {args}")
     if address == "/task":
-        runTask()
+        Thread(target=runTask).start()
     elif address == "/end":
-        runEnd()
+        Thread(target=runEnd).start()
     
 dispatcher = Dispatcher()
 dispatcher.map("/something/*", print_handler)
@@ -186,6 +185,6 @@ port = 1337
 server = BlockingOSCUDPServer((ip, port), dispatcher)
 print("Ready")
 #runEnd()
-runTask()
-#server.serve_forever()  # Blocks forever
+#runTask()
+server.serve_forever()  # Blocks forever
 print("End")
