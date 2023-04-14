@@ -17,18 +17,19 @@ file="Logs/"+now().date().isoformat()+" "+now().time().isoformat()[0:8].replace(
 
 def pw(*text):
     pout = str(now()) + " "
-    with open(file,"a") as f:
-        f.write(str(now())+" ")
-        for t in text:
-            t=str(t)
-            f.write(t+" ")
-            pout += t + " "
-            f.write("\n")
+#    with open(file,"a") as f:
+#        f.write(str(now())+" ")
+    for t in text:
+        t=str(t)
+#            f.write(t+" ")
+        pout += t + " "
+#            f.write("\n")
     print(pout)
 
 pw("Script Start")
 
 def blank():
+    print("Blank Thread Started")
     blank = tk.Tk()
     width,height=1920,1080 # set the variables 
     d=str(width)+"x"+str(height)
@@ -36,10 +37,11 @@ def blank():
     blank.geometry(d)
     blank.configure(bg='#000000')
     blank.title("Blank")
-    blank.attributes("-fullscreen", True)
-    blank.mainloop()
+    #blank.attributes("-fullscreen", True)
+    #blank.mainloop()
 
-Thread(target=blank).start()
+blank()
+#Thread(target=blank).start()
 
 def send_osc(message, address="192.168.2.10", port=53000):
     client = udp_client.SimpleUDPClient(address, port)
@@ -47,6 +49,8 @@ def send_osc(message, address="192.168.2.10", port=53000):
     msg = msg.build()
     client.send(msg)
     return "OSC Message Sent"
+
+pw(send_osc('/cue/{19}/'))
 
 def alivetime():
     global scriptstart
@@ -62,14 +66,18 @@ def alivetime():
     out = days+":"+hours[-2:]+":"+minutes[-2:]+":"+seconds[-2:]
     return "Uptime: "+out
 
+def sound():
+    pw("Sound Triggered")
+    send_osc('/cue/{20}/go')
+
 def win():
     pw("Win")
     inputtxt.config(state="readonly")
     printButton.config(state="disabled")
     background.create_text(960,550, text=" Welcome BenSamZ ",fill="white",font=("Flood std", 90,  'bold'), anchor="center")
     #time.sleep(1)
-    pw(send_osc('/cue/{8}/stop'))
-    pw(send_osc('/cue/{10}/go'))
+    pw(send_osc('/cue/{20}/stop'))
+    pw(send_osc('/cue/{21}/go'))
     task_window.destroy()
 
 def tryagain():
@@ -87,7 +95,7 @@ def tryagain():
 def printInput(*none):
     inp = inputtxt.get()
     pw("Password Inputted:",inp)
-    if inp == "test":
+    if inp == "12":
         Thread(target=win).start()
     else:
         Thread(target=tryagain).start()
@@ -99,69 +107,47 @@ def runTask():
     global tryagaintxt
     global password
     global task_window
-
     task_window = tk.Tk()
     width,height=1920,1080 # set the variables 
     d=str(width)+"x"+str(height)
-    width,height=1920,1080 # set the variables
     task_window.geometry(d)
     task_window.configure(bg='#000000')
-    task_window.title("Ben")
-
+    task_window.title("Bruce")
     background = tk.Canvas(task_window, width=1920, height=1080)
 
-    bgimage = Image.open("ben.png")
+    bgimage = Image.open("bruce.jpg")
     bgimage = bgimage.resize((1920,1080), Image.LANCZOS)
     bgimage = ImageTk.PhotoImage(bgimage, master = background)
 
     background.create_image(960,540,anchor="center",image=bgimage)
 
-    background.create_text(100,885, text="Ben's Super Secret",font=("Montserrat", 50,  'bold'), fill="blue", anchor="w")
-    background.create_text(100,950, text="Login Page",font=("Montserrat", 50,  'bold'), fill="blue", anchor="w")
-    background.create_text(100,800, text="SLLET ",fill="magenta",font=("Flood std", 90,  'bold'), anchor="w")
     background.place(relx=0.5,rely=0.5,anchor="center")
-
     password = tk.Frame(task_window, padx=5, pady=5)
-
-
-    usertxt = tk.Label(password, text="Username: ",font=("Montserrat", 20), justify="left", anchor="w")
-    usertxt.grid(column = 0, row = 0)
-
-    bentxt = tk.Entry(password, width = 20, font=("Montserrat", 20))
-    bentxt.insert(0, 'BenSamZ')
-    bentxt.config(state="readonly")
-    bentxt.grid(column = 1, row = 0)
-
-    pwdtxt = tk.Label(password, text="Password: ",font=("Montserrat", 20), justify="left", anchor="w")
+    pwdtxt = tk.Label(password, text="Speaker: ",font=("Montserrat", 20), justify="left", anchor="w")
     pwdtxt.grid(column = 0, row = 1)
-
     # TextBox Creation
     inputtxt = tk.Entry(password, width = 20, font=("Montserrat", 20))
     inputtxt.grid(column = 1, row = 1)
     inputtxt.bind('<Return>', printInput)
     inputtxt.focus()
-      
     # Button Creation
     printButton = tk.Button(password, text = "Enter", command = printInput, font=("Montserrat", 20,  'bold'))
     printButton.grid(column = 1, row = 2)
-
     password.place(relx=0.05,rely=0.25,anchor="w")
 
+    sounds = tk.Button(task_window,text="Sound!",bg="#000000",fg="white",font=("Montserrat", 20,  'bold'), command=sound)
+    sounds.place(relx=0.9, rely=0.1, anchor='e')
+    
     tryagaintxt = tk.Label(password, text="Try Again",font=("Montserrat", 20, "italic"), justify="left", anchor="w")
-
-    #password = tk.Text(task_window, height=1, width=30, font=("Montserrat", 20))
-    #password.pack()
-    #password.insert(tk.END, "Just a text Widget\nin two lines\n")
-
-    task_window.attributes("-fullscreen", True)
+    #task_window.attributes("-fullscreen", True)
     task_window.mainloop()
 
-def runIntro():
+def runEnd():
     # create a new instance of the media player
     player = vlc.MediaPlayer()
 
     # set the media to play
-    media = vlc.Media("Scene 1.mov")
+    media = vlc.Media("Scene 3.mov")
     player.set_media(media)
 
     # start playing the media
@@ -187,8 +173,8 @@ def default_handler(address, *args):
     print(f"DEFAULT {address}: {args}")
     if address == "/task":
         runTask()
-    elif address == "/intro":
-        runIntro()
+    elif address == "/end":
+        runEnd()
     
 dispatcher = Dispatcher()
 dispatcher.map("/something/*", print_handler)
@@ -199,7 +185,7 @@ port = 1337
 
 server = BlockingOSCUDPServer((ip, port), dispatcher)
 print("Ready")
-#runIntro()
-#runTask()
-server.serve_forever()  # Blocks forever
+#runEnd()
+runTask()
+#server.serve_forever()  # Blocks forever
 print("End")
