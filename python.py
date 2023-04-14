@@ -28,15 +28,18 @@ def pw(*text):
 
 pw("Script Start")
 
-blank = tk.Tk()
-width,height=1920,1080 # set the variables 
-d=str(width)+"x"+str(height)
-width,height=1920,1080 # set the variables
-blank.geometry(d)
-blank.configure(bg='#000000')
-blank.title("Blank")
-blank.attributes("-fullscreen", True)
-blank.focus()
+def blank():
+    blank = tk.Tk()
+    width,height=1920,1080 # set the variables 
+    d=str(width)+"x"+str(height)
+    width,height=1920,1080 # set the variables
+    blank.geometry(d)
+    blank.configure(bg='#000000')
+    blank.title("Blank")
+    blank.attributes("-fullscreen", True)
+    blank.mainloop()
+
+Thread(target=blank).start()
 
 def send_osc(message, address="192.168.2.10", port=53000):
     client = udp_client.SimpleUDPClient(address, port)
