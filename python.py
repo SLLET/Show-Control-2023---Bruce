@@ -67,10 +67,12 @@ def alivetime():
 
 def sound():
     pw("Sound Triggered")
+    pw(send_osc('/cue/{20}/stop'))
     pw(send_osc('/cue/{20}/go'))
 
 def win():
     pw("Win")
+    pw(send_osc('/cue/{20}/stop'))
     inputtxt.config(state="readonly")
     printButton.config(state="disabled")
     background.create_text(960,550, text=" Welcome BenSamZ ",fill="white",font=("Flood std", 90,  'bold'), anchor="center")
@@ -114,7 +116,7 @@ def runTask():
     task_window.title("Bruce")
     background = tk.Canvas(task_window, width=1920, height=1080)
 
-    bgimage = Image.open("bruce.jpg")
+    bgimage = Image.open("bruceTask.jpg")
     bgimage = bgimage.resize((1920,1080), Image.LANCZOS)
     bgimage = ImageTk.PhotoImage(bgimage, master = background)
 
@@ -134,7 +136,7 @@ def runTask():
     printButton.grid(column = 1, row = 2)
     password.place(relx=0.95,rely=0.6,anchor="e")
 
-    sounds = tk.Button(task_window,text="Sound!",bg="#000000",fg="white",font=("Montserrat", 20,  'bold'), command=sound)
+    sounds = tk.Button(task_window,text="Listen",bg="green",fg="white",font=("Montserrat", 40,  'bold'), command=sound)
     sounds.place(relx=0.9, rely=0.2, anchor='e')
     
     tryagaintxt = tk.Label(password, text="Try Again",font=("Montserrat", 20, "italic"), justify="left", anchor="w")
@@ -146,7 +148,7 @@ def runEnd():
     player = vlc.MediaPlayer()
 
     # set the media to play
-    media = vlc.Media("Scene 3.mov")
+    media = vlc.Media("Scene 3.mp4")
     player.set_media(media)
 
     # start playing the media
