@@ -75,7 +75,7 @@ def win():
     pw(send_osc('/cue/{20}/stop'))
     inputtxt.config(state="readonly")
     printButton.config(state="disabled")
-    background.create_text(960,550, text=" Welcome BenSamZ ",fill="white",font=("Flood std", 90,  'bold'), anchor="center")
+    #background.create_text(960,550, text=" Welcome BruceSamZ ",fill="white",font=("Flood std", 90,  'bold'), anchor="center")
     #time.sleep(1)
     pw(send_osc('/cue/{20}/stop'))
     pw(send_osc('/cue/{21}/go'))
@@ -120,7 +120,7 @@ def runTask():
     bgimage = bgimage.resize((1920,1080), Image.LANCZOS)
     bgimage = ImageTk.PhotoImage(bgimage, master = background)
 
-    background.create_image(960,540,anchor="center",image=bgimage)
+    #background.create_image(960,540,anchor="center",image=bgimage)
 
     background.place(relx=0.5,rely=0.5,anchor="center")
     password = tk.Frame(task_window, padx=5, pady=5)
